@@ -1,0 +1,10 @@
+name: amber_base
+version: 0.1.0
+
+authors:
+   - Damian Hamill <damianham@gmail.com>
+
+description: |
+   Base application recipe
+
+license: MIT

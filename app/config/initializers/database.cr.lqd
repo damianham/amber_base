@@ -1,9 +1,10 @@
 {%- if model == "granite" -%}
 require "granite/adapter/{{ database }}"
 
-Granite.settings.database_url = Amber.settings.database_url
+Granite::Adapters << Granite::Adapter::{{ database | capitalize }}.new({ name: "{{ database }}", url: Amber.settings.database_url })
 Granite.settings.logger = Amber.settings.logger.dup
 Granite.settings.logger.progname = "Granite"
+
 {%- else -%}
 {% if database == "sqlite" -%}
 require "sqlite3"
@@ -13,7 +14,7 @@ require "{{ database }}"
 require "crecto"
 
 Query = Crecto::Repo::Query
-Multi = Crecto::Multi
+Multi = Crecto::Repo::Multi
 
 module Repo
   extend Crecto::Repo

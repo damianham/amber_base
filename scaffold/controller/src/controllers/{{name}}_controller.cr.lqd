@@ -1,121 +1,104 @@
 class {{ class_name }}Controller < ApplicationController
+  getter {{ name }} = {{ class_name }}.new
+
+  before_action do
+    only [:show, :edit, :update, :destroy] { set_{{ name }} }
+  end
+
   def index
 {{"    "}}{% if model == "granite" -%}
     {{ name | pluralize }} = {{ class_name }}.all
 {% else -%}
-    {{ name | pluralize }} = Repo.all({{ class_name }})
+    {{ name | pluralize }} = Repo.all {{ class_name }}
 {% endif -%}
-{{"    "}}render("index.{{language}}")
+{{"    "}}render "index.{{language}}"
   end
 
   def show
-{{"    "}}{% if model == "granite" -%}
-    if {{ name }} = {{ class_name }}.find params["id"]
-{% else -%}
-    if {{ name }} = Repo.get({{ class_name }}, params["id"])
-{% endif -%}
-{{"      "}}render("show.{{ language }}")
-    else
-      flash["warning"] = "{{ class_name }} with ID #{params["id"]} Not Found"
-      redirect_to "/{{ name | pluralize }}"
-    end
+    render "show.{{ language }}"
   end
 
   def new
-    {{ name }} = {{ class_name }}.new
 {% if model == "crecto" -%}
-{{"    "}}changeset = {{ class_name }}.changeset({{ name }})
+{{"    "}}changeset = {{ class_name }}.changeset {{ name }}
 {% endif -%}
-{{"    "}}render("new.{{ language }}")
+{{"    "}}render "new.{{ language }}"
+  end
+
+  def edit
+{{"    "}}{% if model == "crecto" -%}
+    changeset = Repo.update {{ name }}
+{% endif -%}
+{{"      "}}render "edit.{{ language }}"
   end
 
   def create
 {{"    "}}{% if model == "granite" -%}
-    {{ name }} = {{ class_name }}.new({{ name }}_params.validate!)
+    {{ name }} = {{ class_name }}.new {{ name }}_params.validate!
     if {{ name }}.valid? && {{ name }}.save
-      flash["success"] = "Created {{ class_name }} successfully."
-      redirect_to "/{{ name | pluralize }}"
+      redirect_to action: :index, flash: {"success" => "Created {{ name }} successfully."}
     else
       flash["danger"] = "Could not create {{ class_name }}!"
-      render("new.{{ language }}")
+      render "new.{{ language }}"
+    end
 {% else -%}
-    {{ name }} = {{ class_name }}.new
-    {{ name }}.update_from_hash(params.to_h.select({{ name }}_params.validate!.keys).compact)
-    changeset = Repo.insert({{ name }})
+    {{ name }}.update_from_hash params.to_h.select({{ name }}_params.validate!.keys).compact)
+    changeset = Repo.insert {{ name }}
     if changeset.errors.any?
       flash["danger"] = "Could not create {{ class_name }}!"
-      render("new.{{ language }}")
+      render "new.{{ language }}"
     else
       flash["success"] = "Created {{ class_name }} successfully."
       redirect_to "/{{ name | pluralize }}"
-{% endif -%}
-{{"    "}}end
-  end
-
-  def edit
-{{"    "}}{% if model == "granite" -%}
-    if {{ name }} = {{ class_name }}.find params["id"]
-{% else -%}
-    if {{ name }} = Repo.get({{ class_name }}, params["id"])
-      changeset = Repo.update({{ name }})
-{% endif -%}
-{{"      "}}render("edit.{{ language }}")
-    else
-      flash["warning"] = "{{ class_name }} with ID #{params["id"]} Not Found"
-      redirect_to "/{{ name | pluralize }}"
     end
+{% endif %}
+
   end
 
   def update
 {{"    "}}{% if model == "granite" -%}
-    if {{ name }} = {{ class_name }}.find(params["id"])
-      {{ name }}.set_attributes({{ name }}_params.validate!)
-      if {{ name }}.valid? && {{ name }}.save
-        flash["success"] = "Updated {{ class_name }} successfully."
-        redirect_to "/{{ name | pluralize }}"
-      else
-        flash["danger"] = "Could not update {{ class_name }}!"
-        render("edit.{{ language }}")
-      end
-{% else -%}
-    if {{ name }} = Repo.get({{ class_name }}, params["id"])
-      changeset = Repo.update({{ name }})
-      {{ name }}.update_from_hash(params.to_h.select({{ name }}_params.validate!.keys).compact)
-      changeset = Repo.update({{ name }})
-
-      if changeset.errors.any?
-        flash["danger"] = "Could not update {{ class_name }}!"
-        render("edit.{{ language }}")
-      else
-        flash["success"] = "Updated {{ class_name }} successfully."
-        redirect_to "/{{ name | pluralize }}"
-      end
-{% endif -%}
-{{"    "}}else
-      flash["warning"] = "{{ class_name }} with ID #{params["id"]} Not Found"
-      redirect_to "/{{ name | pluralize }}"
+    {{ name }}.set_attributes {{ name }}_params.validate!
+    if {{ name }}.valid? && {{ name }}.save
+      redirect_to action: :index, flash: {"success" => "Updated {{ name }} successfully."}
+    else
+      flash["danger"] = "Could not update {{ class_name }}!"
+      render "edit.{{ language }}"
     end
+{% else -%}
+    {{ name }}.update_from_hash params.to_h.select({{ name }}_params.validate!.keys).compact
+    changeset = Repo.update {{ name }}
+
+    if changeset.errors.any?
+      flash["danger"] = "Could not update {{ class_name }}!"
+      render "edit.{{ language }}"
+    else
+      redirect_to action: :index, flash: {"success" => "Updated {{ name }} successfully."}
+    end
+{% endif -%}
   end
 
   def destroy
 {{"    "}}{% if model == "granite" -%}
-    if {{ name }} = {{ class_name }}.find params["id"]
-      {{ name }}.destroy
+    {{ name }}.destroy
 {% else -%}
-    if {{ name }} = Repo.get({{ class_name }}, params["id"])
-      Repo.delete({{ name }})
+      Repo.delete {{ name }}
 {% endif -%}
-{{"    "}}else
-      flash["warning"] = "{{ class_name }} with ID #{params["id"]} Not Found"
-    end
-    redirect_to "/{{ name | pluralize }}"
+{{"    "}}
+    redirect_to action: :index, flash: {"success" => "Deleted {{ name }} successfully."}
   end
 
   def {{ name }}_params
     params.validation do
     {% for field in visible_fields -%}
-    {{"  "}}required(:{{ field.name }}{% if field.type == "reference" %}_id{% endif %}) { |f| !f.nil? }
+    {{"  "}}required :{{ field.name }}{% if field.type == "reference" %}_id{% endif %} { |f| !f.nil? }
     {% endfor -%}
-    end
+  end
+
+  private def set_{{ name }}
+{{"    "}}{% if model == "granite" -%}
+    @{{ name }} = Repo.get! {{ class_name }}, params[:id]
+{% else -%}
+    @{{ name }} = {{ class_name }}.find params[:id]
+{% endif -%}
   end
 end

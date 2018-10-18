@@ -21,9 +21,13 @@
       <div class="checkbox">
         <%= label(:{{ field.name }}) { check_box(:{{ field.name }}, checked: {{ name }}.{{ field.name }}.to_s == "1" ) } -%>
       </div>
+      <%= label(:{{ field.name }}) do
+        check_box(:{{ field.name }}, checked: {{ name }}.{{ field.name }}.to_s == "1\",
+              class: "form-check-input")
+      end -%>
   {% elsif field.type == "reference" -%}
       <%= label(:{{ field.name }}) -%>
-      <%= select_field(name: "{{ field.name }}_id", collection:  {% if model == "crecto" %}Repo.all({{ field.name | capitalize }}){% else %}{{ field.name | capitalize }}.all{% endif %}.map{|{{ field.name }}| [{{ field.name }}.id, {{ field.name }}.id]}, selected: {{ name }}.{{ field.name }}_id, class: "form-control") -%>
+      <%= select_field(name: "{{ field.name }}_id", collection:  {% if model == "crecto" %}Repo.all({{ field.class_name }}){% else %}{{ field.class_name }}.all{% endif %}.map{|{{ field.name }}| [{{ field.name }}.id, {{ field.name }}.id]}, selected: {{ name }}.{{ field.name }}_id, class: "form-control") -%>
   {% else -%}
       <%= text_field(name: "{{ field.name }}", value: {{ name }}.{{ field.name }}, placeholder: "{{ field.name | capitalize }}", class: "form-control") -%>
   {% endif -%}

@@ -6,8 +6,7 @@ describe {{class_name}} do
   {% if model == "granite" -%}
   {{"  "}}{{class_name}}.clear
   {% else -%}
-  {{"  "}}multi = Multi.new
-  {{"  "}}multi.delete_all({{class_name}})
+  {{"  "}}Repo.delete_all {{class_name}}
   {% endif -%}
   end
 end

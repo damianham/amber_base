@@ -7,7 +7,7 @@ class {{class_name}} < Granite::Base
 {{"  "}}belongs_to :{{field.name}}
 {% endif -%}
 {% endfor %}
-  # id : Int64 primary key is created for you
+  primary id : Int64
 {% for field in fields -%}
 {% if field.type != "reference" -%}
 {% if field.hidden == false -%}

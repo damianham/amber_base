@@ -52,7 +52,7 @@ class {{ class_name }}Controller < ApplicationController
       redirect_to "/{{ name | pluralize }}"
     end
 {% endif -%}
-  end
+{{"  "}}end
 
   def update
 {{"    "}}{% if model == "granite" -%}

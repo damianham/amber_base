@@ -3,10 +3,6 @@ require "../../src/models/{{name}}"
 
 describe {{class_name}} do
   Spec.before_each do
-  {% if model == "granite" -%}
-  {{"  "}}{{class_name}}.clear
-  {% else -%}
-  {{"  "}}Repo.delete_all {{class_name}}
-  {% endif -%}
+
   end
 end

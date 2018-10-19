@@ -26,10 +26,10 @@ class {{ class_name }}Controller < ApplicationController
   end
 
   def edit
-{{"    "}}{% if model == "crecto" -%}
-    changeset = Repo.update {{ name }}
+{% if model == "crecto" -%}
+{{"    "}}changeset = Repo.update {{ name }}
 {% endif -%}
-{{"     "}}render "edit.{{ language }}"
+{{"    "}}render "edit.{{ language }}"
   end
 
   def create

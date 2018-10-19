@@ -82,8 +82,7 @@ class {{ class_name }}Controller < ApplicationController
 {% else -%}
       Repo.delete {{ name }}
 {% endif -%}
-{{"    "}}
-    redirect_to action: :index, flash: {"success" => "Deleted {{ name }} successfully."}
+{{"    "}}redirect_to action: :index, flash: {"success" => "Deleted {{ name }} successfully."}
   end
 
   def {{ name }}_params

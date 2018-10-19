@@ -98,7 +98,7 @@ class {{ class_name }}Controller < ApplicationController
 {{"    "}}{% if model == "crecto" -%}
     @{{ name }} = Repo.get! {{ class_name }}, params[:id]
 {% else -%}
-    @{{ name }} = {{ class_name }}.find params[:id]
+    @{{ name }} = {{ class_name }}.find! params[:id]
 {% endif -%}
 {{"  "}}end
 end

@@ -29,7 +29,7 @@ class {{ class_name }}Controller < ApplicationController
 {{"    "}}{% if model == "crecto" -%}
     changeset = Repo.update {{ name }}
 {% endif -%}
-{{"      "}}render "edit.{{ language }}"
+{{"     "}}render "edit.{{ language }}"
   end
 
   def create
@@ -51,8 +51,7 @@ class {{ class_name }}Controller < ApplicationController
       flash["success"] = "Created {{ class_name }} successfully."
       redirect_to "/{{ name | pluralize }}"
     end
-{% endif %}
-
+{% endif -%}
   end
 
   def update
@@ -75,7 +74,7 @@ class {{ class_name }}Controller < ApplicationController
       redirect_to action: :index, flash: {"success" => "Updated {{ name }} successfully."}
     end
 {% endif -%}
-  end
+{{"  "}}end
 
   def destroy
 {{"    "}}{% if model == "granite" -%}
@@ -92,6 +91,7 @@ class {{ class_name }}Controller < ApplicationController
     {% for field in visible_fields -%}
     {{"  "}}required :{{ field.name }}{% if field.type == "reference" %}_id{% endif %} { |f| !f.nil? }
     {% endfor -%}
+    end
   end
 
   private def set_{{ name }}
@@ -100,5 +100,5 @@ class {{ class_name }}Controller < ApplicationController
 {% else -%}
     @{{ name }} = {{ class_name }}.find params[:id]
 {% endif -%}
-  end
+{{"  "}}end
 end

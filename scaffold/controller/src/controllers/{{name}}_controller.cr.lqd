@@ -95,7 +95,7 @@ class {{ class_name }}Controller < ApplicationController
   end
 
   private def set_{{ name }}
-{{"    "}}{% if model == "granite" -%}
+{{"    "}}{% if model == "crecto" -%}
     @{{ name }} = Repo.get! {{ class_name }}, params[:id]
 {% else -%}
     @{{ name }} = {{ class_name }}.find params[:id]

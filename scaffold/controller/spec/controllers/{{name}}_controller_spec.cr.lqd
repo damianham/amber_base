@@ -17,15 +17,9 @@ def {{ name | underscore }}_params
 end
 
 def create_{{ name | underscore }}
-  {% if model == "crecto" -%}
-  model = {{ class_name }}.new
-  model.update_from_hash({{ name | underscore }}_hash)
-  Repo.insert(model).instance
-{% else -%}
   model = {{ class_name }}.new({{ name | underscore }}_hash)
   model.save
   model
-{% endif -%}
 end
 
 class {{ class_name }}ControllerTest < GarnetSpec::Controller::Test
@@ -46,11 +40,7 @@ describe {{ class_name }}ControllerTest do
   subject = {{ class_name }}ControllerTest.new
 
   it "renders {{ name }} index template" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     response = subject.get "/{{ name | pluralize }}"
 
     response.status_code.should eq(200)
@@ -58,11 +48,7 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "renders {{ name }} show template" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     model = create_{{ name | underscore }}
     location = "/{{ name | pluralize }}/#{model.id}"
 
@@ -73,11 +59,7 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "renders {{ name }} new template" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     location = "/{{ name | pluralize }}/new"
 
     response = subject.get location
@@ -87,11 +69,7 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "renders {{ name }} edit template" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     model = create_{{ name | underscore }}
     location = "/{{ name | pluralize }}/#{model.id}/edit"
 
@@ -102,11 +80,8 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "creates a {{ name }}" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
+
     response = subject.post "/{{ name | pluralize }}", body: {{ name | underscore }}_params
 
     response.headers["Location"].should eq "/{{ name | pluralize }}"
@@ -115,11 +90,7 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "updates a {{ name }}" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     model = create_{{ name | underscore }}
     response = subject.patch "/{{ name | pluralize }}/#{model.id}", body: {{ name | underscore }}_params
 
@@ -129,11 +100,7 @@ describe {{ class_name }}ControllerTest do
   end
 
   it "deletes a {{ name }}" do
-    {% if model == "granite" -%}
     {{ class_name }}.clear
-    {% else -%}
-    Repo.delete_all({{ class_name }})
-    {% endif -%}
     model = create_{{ name | underscore }}
     response = subject.delete "/{{ name | pluralize }}/#{model.id}"
 

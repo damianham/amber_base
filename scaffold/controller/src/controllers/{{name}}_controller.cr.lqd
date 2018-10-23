@@ -6,12 +6,8 @@ class {{ class_name }}Controller < ApplicationController
   end
 
   def index
-{{"    "}}{% if model == "granite" -%}
     {{ name | pluralize }} = {{ class_name }}.all
-{% else -%}
-    {{ name | pluralize }} = Repo.all {{ class_name }}
-{% endif -%}
-{{"    "}}render "index.{{language}}"
+    render "index.{{language}}"
   end
 
   def show
@@ -19,21 +15,14 @@ class {{ class_name }}Controller < ApplicationController
   end
 
   def new
-{% if model == "crecto" -%}
-{{"    "}}changeset = {{ class_name }}.changeset {{ name }}
-{% endif -%}
-{{"    "}}render "new.{{ language }}"
+    render "new.{{ language }}"
   end
 
   def edit
-{% if model == "crecto" -%}
-{{"    "}}changeset = Repo.update {{ name }}
-{% endif -%}
-{{"    "}}render "edit.{{ language }}"
+    render "edit.{{ language }}"
   end
 
   def create
-{{"    "}}{% if model == "granite" -%}
     {{ name }} = {{ class_name }}.new {{ name }}_params.validate!
     if {{ name }}.valid? && {{ name }}.save
       redirect_to action: :index, flash: {"success" => "Created {{ name }} successfully."}
@@ -41,21 +30,9 @@ class {{ class_name }}Controller < ApplicationController
       flash["danger"] = "Could not create {{ class_name }}!"
       render "new.{{ language }}"
     end
-{% else -%}
-    {{ name }}.update_from_hash params.to_h.select({{ name }}_params.validate!.keys).compact)
-    changeset = Repo.insert {{ name }}
-    if changeset.errors.any?
-      flash["danger"] = "Could not create {{ class_name }}!"
-      render "new.{{ language }}"
-    else
-      flash["success"] = "Created {{ class_name }} successfully."
-      redirect_to "/{{ name | pluralize }}"
-    end
-{% endif -%}
-{{"  "}}end
+  end
 
   def update
-{{"    "}}{% if model == "granite" -%}
     {{ name }}.set_attributes {{ name }}_params.validate!
     if {{ name }}.valid? && {{ name }}.save
       redirect_to action: :index, flash: {"success" => "Updated {{ name }} successfully."}
@@ -63,26 +40,11 @@ class {{ class_name }}Controller < ApplicationController
       flash["danger"] = "Could not update {{ class_name }}!"
       render "edit.{{ language }}"
     end
-{% else -%}
-    {{ name }}.update_from_hash params.to_h.select({{ name }}_params.validate!.keys).compact
-    changeset = Repo.update {{ name }}
-
-    if changeset.errors.any?
-      flash["danger"] = "Could not update {{ class_name }}!"
-      render "edit.{{ language }}"
-    else
-      redirect_to action: :index, flash: {"success" => "Updated {{ name }} successfully."}
-    end
-{% endif -%}
-{{"  "}}end
+  end
 
   def destroy
-{{"    "}}{% if model == "granite" -%}
     {{ name }}.destroy
-{% else -%}
-      Repo.delete {{ name }}
-{% endif -%}
-{{"    "}}redirect_to action: :index, flash: {"success" => "Deleted {{ name }} successfully."}
+    redirect_to action: :index, flash: {"success" => "Deleted {{ name }} successfully."}
   end
 
   def {{ name }}_params
@@ -94,10 +56,6 @@ class {{ class_name }}Controller < ApplicationController
   end
 
   private def set_{{ name }}
-{{"    "}}{% if model == "crecto" -%}
-    @{{ name }} = Repo.get! {{ class_name }}, params[:id]
-{% else -%}
     @{{ name }} = {{ class_name }}.find! params[:id]
-{% endif -%}
-{{"  "}}end
+  end
 end

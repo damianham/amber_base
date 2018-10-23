@@ -1,6 +1,6 @@
-- if {% if model == "crecto" %} changeset{% else %}{{ name }}{% endif %}.errors
+- if {{ name }}.errors
   ul.errors
-    - {% if model == "crecto" %} changeset{% else %}{{ name }}{% endif %}.errors.each do |error|
+    - {{ name }}.errors.each do |error|
       li = error.to_s
 
 == form(action: "/{{ name | pluralize }}/#{ {{ name }}.id.to_s }", method: {{ name }}.id ? :patch : :post) do
@@ -15,7 +15,7 @@
 {{"        "}}== check_box(:{{ field.name }}, checked: {{ name }}.{{ field.name }}.to_s == "1" )
 {% elsif field.type == "reference" -%}
 {{"    "}}== label(:{{ field.name }})
-{{"    "}}== select_field(name: "{{ field.name }}_id", collection:  {% if model == "crecto" %}Repo.all({{ class_name }}){% else %}{{ class_name }}.all{% endif %}.map{|{{ field.name }}| [{{ field.name }}.id, {{ field.name }}.id]}, selected: {{ name }}.{{ field.name }}_id, class: "form-control")
+{{"    "}}== select_field(name: "{{ field.name }}_id", collection: {{ class_name }}.all.map{|{{ field.name }}| [{{ field.name }}.id, {{ field.name }}.id]}, selected: {{ name }}.{{ field.name }}_id, class: "form-control")
 {% else -%}
 {{"    "}}== text_field(name: "{{ field.name }}", value: {{ name }}.{{ field.name }}, placeholder: "{{ field.name | capitalize }}", class: "form-control")
 {% endif -%}

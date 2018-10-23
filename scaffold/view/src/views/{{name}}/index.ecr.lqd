@@ -20,7 +20,7 @@
     <%- {{ name | pluralize }}.each do |{{ name }}| %>
       <tr>
         {% for field in visible_fields -%}
-        <td><%={{ name }}.{{ field.name }}{% if field.type == "reference" %}{% if model == "crecto" %}_id{% else %}.id{% endif %}{% endif %} %></td>
+        <td><%={{ name }}.{{ field.name }}{% if field.type == "reference" %}.id{% endif %} %></td>
         {% endfor -%}
         <td>
           <span>
